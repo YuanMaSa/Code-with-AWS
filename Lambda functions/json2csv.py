@@ -29,7 +29,7 @@ def lambda_handler(event, context):
     # key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
     # print(key)
     # print("Bucket: " + bucket)
-    key2 = s3.list_objects_v2(Bucket='ecv-customer-detail')
+    key2 = s3.list_objects_v2(Bucket='your_bucket')
     count = key2['KeyCount']
     print(key2['KeyCount'])
     response_list=[]
@@ -40,9 +40,9 @@ def lambda_handler(event, context):
     for obj in range(count):
         key3 = key2['Contents'][obj]['Key']
         print(key3)
-        s3_client.Bucket('ecv-customer-detail').download_file(key3, '/tmp/clients.json')
+        s3_client.Bucket('your_bucket').download_file(key3, '/tmp/clients.json')
 
-        response = s3.get_object(Bucket='ecv-customer-detail', Key=key3)
+        response = s3.get_object(Bucket='your_bucket', Key=key3)
         print("Data: "+response['Body'].read().decode('utf-8'))
 
         with open('/tmp/clients.json')as f:
@@ -65,7 +65,7 @@ def lambda_handler(event, context):
         reader = csv.reader(c)
         for row in reader:
             print("row" + str(row))
-    s3_client.meta.client.upload_file('/tmp/clients.csv', 'ecv-event-client', data2[0]['name']+'.csv')
+    s3_client.meta.client.upload_file('/tmp/clients.csv', 'your_another_bucket', data2[0]['name']+'.csv')
 
     try:
         print("CONTENT TYPE: " + response['ContentType'])
