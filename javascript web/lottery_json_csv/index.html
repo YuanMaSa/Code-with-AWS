@@ -84,7 +84,7 @@
 			function generate_csv() {
 				AWS.config.region = 'us-east-1';
 				AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-					IdentityPoolId: 'us-east-1:382354c6-7a2e-4ebf-8acf-03a42d13417b',
+					IdentityPoolId: 'your_pool_id',
 				});
 				var arr = new Array();
 				var json_data;
@@ -92,7 +92,7 @@
 				document.getElementById("btn").textContent = "Downloading file ...";
 				var bucket = new AWS.S3({
 					params: {
-						Bucket: 'ecv-customer-detail'
+						Bucket: 'your_bucket'
 					}
 				});
 				// -------------------list s3 bucket objects-------------------
@@ -114,7 +114,7 @@
 							// -------------------get s3 bucket objects-------------------
 							var get_data = new AWS.S3({
 								params: {
-									Bucket: 'ecv-customer-detail',
+									Bucket: 'your_bucket',
 									Key: data.Contents[i].Key
 								}
 							});
@@ -142,7 +142,7 @@
 						}]
 						var lambda = new AWS.Lambda();
 						var pullParams = {
-							FunctionName: 'json_to_csv',
+							FunctionName: 'your_function_name',
 							InvocationType: 'RequestResponse',
 							LogType: 'None',
 							Payload: JSON.stringify(data)
