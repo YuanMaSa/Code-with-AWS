@@ -1,6 +1,6 @@
 AWS.config.region = 'us-east-1';
 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-  IdentityPoolId: 'us-east-1:382354c6-7a2e-4ebf-8acf-03a42d13417b',
+  IdentityPoolId: 'your_pool_id',
 });
 var arr = new Array();
 var json_data;
