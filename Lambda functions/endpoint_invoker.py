@@ -7,7 +7,7 @@ import datetime
 client = boto3.client('runtime.sagemaker')
 sns = boto3.client('sns')
 
-ENDPOINT_NAME = 'sagemaker-tensorflow-2018-07-02-08-26-23-455'
+ENDPOINT_NAME = 'your_endpoint_name'
 
 def lambda_handler(event, context):
     # TODO implement
@@ -28,15 +28,9 @@ def lambda_handler(event, context):
         mytime = now + tdelta
 
         mail_response = sns.publish(
-        TopicArn='arn:aws:sns:us-east-1:242196433183:TransactionAlert',
+        TopicArn='your_sns_arn',
         Message='Do you remember this transaction?' + '\n' + mytime.strftime("%Y-%m-%d %H:%M:%S") + '\n Please check your credit card account \n it might be a fraud transaction',
         Subject='Transaction Alert')
-
-
-    # mail_response = sns.publish(
-    # TopicArn='arn:aws:sns:us-east-1:242196433183:TransactionAlert',
-    # Message='Do you remember this transaction?' + '\n' + strftime("%Y-%m-%d %H:%M:%S", gmtime()) + '\n Please check your credit card account \n it might be a fraud transaction',
-    # Subject='Transaction Alert')
 
     http_response = {
         'statusCode': 200,
