@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>eCloudvalley lottery</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->
+	<link rel="icon" type="image/png" href="images/icons/ecloud.png"/>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/animsition/css/animsition.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/daterangepicker/daterangepicker.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="css/util.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+<!--===============================================================================================-->
+	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.248.1.min.js"></script>
+	<script>
+		AWS.config.region = 'us-east-1';
+		AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+    		IdentityPoolId: 'your_pool_id',
+		});
+	</script>
+</head>
+
+<body>
+
+
+	<div class="container-contact100">
+		<div class="wrap-contact100">
+			<form class="contact100-form validate-form" name="fm" sid="form_id" method="post" onsubmit="myfunction();return false;">
+				<!-- <span class="contact100-form-title"><img src="images/ecloud.png" alt="" width="250" height="190"></span> -->
+				<span class="contact100-form-title">
+					<img src="images/ecloud.png" alt="" width="125" height="95">
+					Please Enter Your Information
+				</span>
+
+				<label class="label-input100" for="first-name">Tell us your name *</label>
+				<div class="wrap-input100 rs1-wrap-input100 validate-input" data-validate="Type first name">
+					<input id="first-name" class="input100" type="text" name="first-name" placeholder="First name">
+					<span class="focus-input100"></span>
+				</div>
+				<div class="wrap-input100 rs2-wrap-input100 validate-input" data-validate="Type last name">
+					<input id="last-name" class="input100" type="text" name="last-name" placeholder="Last name">
+					<span class="focus-input100"></span>
+				</div>
+
+				<label class="label-input100" for="email">Enter your email *</label>
+				<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
+					<input id="email" class="input100" type="text" name="email" placeholder="Eg. example@email.com">
+					<span class="focus-input100"></span>
+				</div>
+
+				<label class="label-input100" for="phone">Enter phone number*</label>
+				<div class="wrap-input100">
+					<input id="phone" class="input100" type="text" name="phone" placeholder="Eg. +1 800 000000">
+					<span class="focus-input100"></span>
+				</div>
+
+				<label class="label-input100" for="title">Enter your title</label>
+				<div class="wrap-input100 validate-input" data-validate = "Title is required">
+					<input id="title" class="input100" type="text" name="title" placeholder="Your Title">
+					<span class="focus-input100"></span>
+				</div>
+
+				<label class="label-input100" for="message">Organization *</label>
+				<div class="wrap-input100 validate-input" data-validate = "Organization is required">
+					<textarea id="Organization" class="input100" name="message" placeholder="Your Organization"></textarea>
+					<span class="focus-input100"></span>
+				</div>
+
+				<div class="container-contact100-form-btn">
+					<button class="contact100-form-btn" id="btn">
+						Send and draw a lottery
+					</button>
+				</div>
+			</form>
+			<!--<script>
+  				var button = document.getElementById('btn');
+  				button.addEventListener('click', function() {
+					var firstname = document.getElementById('first-name');
+	  				var lastname = document.getElementById('last-name');
+	  				var email = document.getElementById('email');
+	  				var phone = document.getElementById('phone');
+	  				var title = document.getElementById('title');
+	  				var organization = document.getElementById('Organization');
+    				var body = '{"customer":{"firstname":"'+firstname.value+'","lastname":"'+lastname.value+'","email":"'+email.value+'","phone":"'+phone.value+'","title":"'+title.value+'","organization":"'+organization.value+'"}}';
+    				var filename = email.value+phone.value+".json"
+					console.log(body);
+
+					var s3 = new AWS.S3();
+					var params = {Bucket: 'ecv-customer-detail', Key: filename, Body: body};
+					s3.upload(params, function(err, data) {
+						if (err) console.log(err, err.stack)// an error occurred
+  						else console.log(data);
+					});
+  				}, true);
+			</script>-->
+      <!-- <img src="images/icons/ecloud.png" alt="Girl in a jacket" width="560" height="300"> -->
+			<div class="contact100-more flex-col-c-m" style="background-image: url('images/bg.jpg');">
+				<img src="https://www.ecloudvalley.com/wp-content/uploads/2017/09/logo_pc@2x.png" alt="" width="270" height="120" style="margin-bottom:100px">
+				<div class="flex-w size1 p-b-47">
+					<div class="txt1 p-r-25">
+						<!-- <span class="lnr lnr-map-marker"></span> -->
+					</div>
+
+
+					<div class="flex-col size2">
+						<!-- <span class="txt1 p-b-20">
+							Prize Categories
+						</span> -->
+
+						<span class="txt2" style="font-size:28px">
+							<img src="images/coffee.png" id="gf_image" width="50" height="50">&nbsp;Starbucks coupon<br><br><img src="images/pen.png" id="gf_image" width="60" height="142">
+							&nbsp;ECV pen<br>
+							<br>
+							<img src="images/spinning.png" id="gf_image" width="69" height="92">Earphone winder
+						</span>
+					</div>
+				</div>
+
+				<div class="dis-flex size1 p-b-47">
+					<div class="txt1 p-r-25">
+						<!-- <span class="lnr lnr-phone-handset"></span> -->
+					</div>
+
+					<!-- <div class="flex-col size2">
+						<span class="txt1 p-b-20">
+							Lucky Number
+						</span>
+
+						<span class="txt3" id="luckynumber">
+							May the luck with you
+
+						</span>
+					</div> -->
+				</div>
+
+				<div class="dis-flex size1 p-b-47">
+					<div class="txt1 p-r-25">
+						<!-- <span class="lnr lnr-envelope"></span> -->
+					</div>
+
+					<div class="flex-col size2">
+						<!-- <span class="txt1 p-b-20">
+							Your Prize
+						</span>
+
+						<span class="txt3" id="results">
+							We prepare some elabrate gifts for you
+
+						</span> -->
+						<script>
+
+						// window.onload=function(){
+						// 		var btn = document.getElementById('btn');
+								// var num = new Array();
+								// var num2 = new Array();
+								// var content_val;
+								// for(var i = 0; i < 1; i++){
+								// 	num[num.length] = Math.ceil(Math.random() * 100 + 1);
+								// 	content_val = num;
+								// 	if(num.includes(content_val)){
+								// 		console.log("number already out");
+								// 	}else{
+								// 		num2.push(content_val)
+								// 		var content_val2 = num2;
+								// 		console.log("new number out");
+								// 	}
+								// }
+						// 		var arr = [];
+            //     for(var a = 0; a < 100; a++){
+            //        arr[a] = a;
+            //     }
+            //    var arrNum = [];
+            //    var ranNum = 1;
+            //    for (var i = 0; i < ranNum; i++){
+            //       arrNum[i] = Math.floor(Math.random() * 100);
+            //        if (i > 0) {
+            //         for (var j = 0; j < i; j++) {
+            //         if (arrNum[j] == arrNum[i]) {
+            //          i--;
+            //          break;
+            //           }
+            //         }
+            //       }
+            //     }
+            //     console.log("Number: "+arrNum);
+						// 		var content_val2 = arrNum;
+						//
+						// 				// var content_val = Math.floor((Math.random() * 100) + 1);
+						// 				luckynumber.append(content_val2);
+						// 				var prize1 = 'you got prize 1';
+						// 				var prize2 = 'you got prize 2';
+						// 				var prize3 = 'you got prize 3';
+						// 				if(content_val2>=90){
+						// 					results.append(prize1);
+						// 				}else if(content_val2>=60 && content_val2<90){
+						// 					results.append(prize2);
+						// 				}else{
+						// 					results.append(prize3);
+						// 				}
+						//
+						//
+						// }
+
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<div id="dropDownSelect1"></div>
+
+<!--===============================================================================================-->
+	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/animsition/js/animsition.min.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/bootstrap/js/popper.js"></script>
+	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/select2/select2.min.js"></script>
+	<script>
+		$(".selection-2").select2({
+			minimumResultsForSearch: 20,
+			dropdownParent: $('#dropDownSelect1')
+		});
+	</script>
+<!--===============================================================================================-->
+	<script src="vendor/daterangepicker/moment.min.js"></script>
+	<script src="vendor/daterangepicker/daterangepicker.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/countdowntime/countdowntime.js"></script>
+<!--===============================================================================================-->
+  <script src="js/main.js"></script>
+	<script src="js/set_action.js"></script>
+	<script src="js/app.js"></script>
+
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-23581568-13"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'UA-23581568-13');
+	</script>
+</body>
+</html>

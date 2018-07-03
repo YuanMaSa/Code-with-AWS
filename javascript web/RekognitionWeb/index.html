@@ -1,0 +1,271 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Demo</title>
+		<link rel="stylesheet" href="style.css">
+		<link rel="icon" type="image/png" href="images/icons/ecloud.png"/>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	</head>
+	<body>
+		<script src="https://sdk.amazonaws.com/js/aws-sdk-2.260.1.min.js"></script>
+		<script>
+		AWS.config.region = 'us-east-1'; // Region
+		AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+		IdentityPoolId: 'your_pool_id',
+		});
+		// console.log(AWS.config.credentials);
+		</script>
+		<!-- <div id="particles-js"> -->
+			<!-- <button id="snap" class="btn btn-primary btn-lg" style="margin-left: 600px;margin-top: 20px">Click to take Photo</button> -->
+			<div class="col-md-6 col-xs-12 col-sm-12 left" style="padding-left: 0px;">
+
+					<div id="article">
+						<h1>Take a photo here</h1>
+					</div>
+
+				<video id="video" controls autoplay></video>
+				<!-- <canvas id="canvas" width="640" height="480""></canvas> -->
+				<!-- <div id="particles-js"></div> -->
+
+			<button id="snap" class="btn btn-primary btn-lg" style="margin-left: 100px;margin-top: 40px;padding-top: 30px;padding-right: 46px;padding-bottom: 30px;padding-left: 46px">Click here to take a Photo</button>
+		</div>
+
+		<div class="col-md-6 col-xs-12 col-sm-12 right" style="padding-left: 0px;position: static;">
+				<!-- <img src="static/img/ecloud.png" alt="" width="20%" height="20%" style="margin-left:50px"> -->
+				<div id="article"><h1>Recognizing Your Photo</h1></div>
+				<canvas id="canvas"></canvas>
+			<div id="article2">
+				<div class="row">
+				<div class="col-sm-2">
+				<div class="loader" id="loader"></div>
+				</div>
+				<div class="col-sm-10">
+				<h3 style="color: #7700FF;" id="topic">Analyzing your great look</h3>
+			    </div>
+			    </div>
+				<h3 id ="AgeRange"></h3>
+				<h3 id ="gender"></h3>
+				<h3 id ="emotion"></h3>
+				<h3 id ="isSmile"></h3>
+				<h4 style="margin-top: 80px; margin-left: 50px">--------------other objects detection--------------</h4>
+				<ul id="objects" style="margin-left: 50px"></ul>
+			</div>
+		</div>
+	<!-- </div>
+	<div id="particles-js"></div> -->
+
+
+	<script>
+		document.addEventListener('DOMContentLoaded',function(){/*fun code to run*/
+	// Get access to the camera!
+
+	var canvas = document.getElementById('canvas');
+	var context = canvas.getContext('2d');
+	var video = document.getElementById('video');
+
+
+
+	video.setAttribute("playsinline", true);
+	video.setAttribute("controls", true);
+
+	setTimeout(() => {
+	    video.removeAttribute("controls");
+	});
+	var mediaConfig =  { video: true };
+	var errBack = function(e) {
+	console.log('An error has occurred!', e)
+	};
+	if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+	// Not adding `{ audio: true }` since we only want video now
+	navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+	try {
+		video.srcObject = stream;
+	} catch (error) {
+	video.src = URL.createObjectURL(stream);
+	}
+	// video.src = window.URL.createObjectURL(stream);
+	video.play();
+	});
+	}
+	else if(navigator.getUserMedia) { // Standard
+	navigator.getUserMedia({ video: true }, function(stream) {
+	video.src = stream;
+	video.play();
+	}, errBack);
+	} else if(navigator.webkitGetUserMedia) { // WebKit-prefixed
+	navigator.webkitGetUserMedia({ video: true }, function(stream){
+	video.src = window.webkitURL.createObjectURL(stream);
+	video.play();
+	}, errBack);
+	} else if(navigator.mozGetUserMedia) { // Mozilla-prefixed
+	navigator.mozGetUserMedia({ video: true }, function(stream){
+	video.src = window.URL.createObjectURL(stream);
+	video.play();
+	}, errBack);
+	}
+
+		// Trigger photo take
+	document.getElementById("snap").addEventListener("click", function() {
+
+    document.getElementById("AgeRange").innerHTML="";
+    document.getElementById("gender").innerHTML="";
+    document.getElementById("emotion").innerHTML="";
+    document.getElementById("isSmile").innerHTML="";
+    document.getElementById("objects").style.display="none";
+    document.getElementById("objects").innerHTML="";
+    document.getElementById("topic").style.display = "block";
+    document.getElementById("loader").style.display="block"
+
+	console.log(video.videoHeight);
+	console.log(video.videoWidth);
+
+	canvas.height = video.videoHeight;
+	canvas.width = video.videoWidth;
+
+	context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+
+	var img = canvas.toDataURL('image/png',0.8);
+
+	console.log(context);
+	// console.log(img.replace(/^data:image\/[^;]/, 'data:application/octet-stream'));
+	var pic = context.createImageData(640, 480);
+	console.log(pic);
+	function dataURItoBlob(dataURI) {
+	// convert base64/URLEncoded data component to raw binary data held in a string
+	var byteString;
+	if (dataURI.split(',')[0].indexOf('base64') >= 0)
+	byteString = atob(dataURI.split(',')[1]);
+	else
+	byteString = unescape(dataURI.split(',')[1]);
+	// separate out the mime component
+	var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+	// write the bytes of the string to a typed array
+	var ia = new Uint8Array(byteString.length);
+	for (var i = 0; i < byteString.length; i++) {
+	ia[i] = byteString.charCodeAt(i);
+	}
+	return new Blob([ia], {type:mimeString});
+	}
+	var blob = dataURItoBlob(img);
+	console.log(blob);
+
+	var s3 = new AWS.S3({
+					params: {
+						Bucket: 'rekog-store'
+					}
+				});
+
+	var time = Date.now();
+	const timestamp = Math.floor(time / 1000);
+	var input_pic = timestamp.toString();
+
+	var rekognition = new AWS.Rekognition();
+	var pic_params = {
+		Image: {
+		S3Object: {
+		 Bucket: "rekog-store",
+		 Name: input_pic+".png"
+		}
+	  },
+  		Attributes: ["ALL"]
+    /* more items */
+	};
+
+			if (!img.length) {
+				return alert('Please choose a file to upload first.');
+			}
+
+			s3.upload({
+					Key: input_pic+".png",
+					Body: blob,
+					ContentType: 'image/png',
+					ACL: 'public-read'
+					}, function(err, data) {
+						if (err) {
+							return alert('There was an error uploading your photo: ', err.message);
+						}
+						alert('Successfully uploaded photo! Please wait for facial analysis...');
+
+							rekognition.detectFaces(pic_params, function(err, data) {
+								if (err) {
+									console.log(err, err.stack);
+								}else{
+									document.getElementById("objects").style.display="block";
+									var loader = document.getElementById("loader");
+									loader.style.display = "none";
+									document.getElementById("topic").style.display = "none";
+									console.log(data);
+									console.log("Age: "+JSON.stringify(data.FaceDetails[0].AgeRange));
+									console.log("Gender: "+JSON.stringify(data.FaceDetails[0].Gender));
+									console.log("Emotion: "+JSON.stringify(data.FaceDetails[0].Emotions));
+									console.log("isSmile: "+JSON.stringify(data.FaceDetails[0].Smile));
+									// ------age info------
+									var low_age = JSON.stringify(data.FaceDetails[0].AgeRange.Low);
+									var high_age = JSON.stringify(data.FaceDetails[0].AgeRange.High);
+									var predict_age = (parseInt(low_age) + parseInt(high_age)) / 2;
+									console.log("predict_age: "+predict_age.toString());
+
+									// ------gender info------
+									var gender = JSON.stringify(data.FaceDetails[0].Gender.Value);
+									console.log(gender);
+
+									if (gender=='"Male"'){
+										document.getElementById("AgeRange").innerHTML = "Age:".fontcolor("#ff79bc")+" Hey you look like a ".fontcolor("#ff79bc")+predict_age.toString().fontcolor("#ff79bc")+" age man".fontcolor("#ff79bc");
+										document.getElementById("gender").innerHTML = "Gender: ".fontcolor("purple")+"Man".fontcolor("purple");
+									}else{
+										document.getElementById("AgeRange").innerHTML = "Age:".fontcolor("#ff79bc")+" Hey you look like a ".fontcolor("#ff79bc")+predict_age.toString().fontcolor("#ff79bc")+" age lady".fontcolor("#ff79bc");
+										document.getElementById("gender").innerHTML = "Gender: ".fontcolor("purple")+"Lady".fontcolor("purple");
+									}
+
+									// ------emotion info------
+									var emotion = JSON.stringify(data.FaceDetails[0].Emotions[0].Type);
+									console.log(emotion);
+									    document.getElementById("emotion").innerHTML = "Emotion:".fontcolor("orange")+" Now your emotion is ".fontcolor("orange")+emotion.fontcolor("orange");
+									// ------smile info------
+									var isSmile = JSON.stringify(data.FaceDetails[0].Smile.Value);
+									console.log("isSmile: "+isSmile);
+									if(isSmile=="false"){
+										document.getElementById("isSmile").innerHTML = "C'mon give everyone a smile".fontcolor("	#0080ff");
+									}else{
+										document.getElementById("isSmile").innerHTML = "Wow it seems like you always smile".fontcolor("	#0080ff");
+									}
+									var label_params = {
+									  Image: {
+									   S3Object: {
+									    Bucket: "rekog-store",
+									    Name: input_pic+".png"
+									   }
+									  },
+									  MaxLabels: 100,
+									  MinConfidence: 0.0
+									 };
+									rekognition.detectLabels(label_params, function(err, data) {
+										if(err){
+											console.log(err, err.stack);
+										}else{
+											console.log("Labels: "+JSON.stringify(data));
+											for(var i=  0; i<data.Labels.length; i++){
+												console.log(data.Labels[i].Name);
+												document.getElementById('objects').innerHTML +=
+								                '<li>' + data.Labels[i].Name + '</li>';
+											}
+										}
+									});
+								}
+
+							});
+
+
+						});
+					});
+								})
+
+
+		</script>
+		<!-- <script type="text/javascript" src="particles.js"></script>
+		<script type="text/javascript" src="app.js"></script> -->
+
+
+	</body>
+</html>
